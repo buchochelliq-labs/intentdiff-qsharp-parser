@@ -10,22 +10,22 @@
 //!   function         — function Baz(…) : T { … } (label = function name)
 //!   newtype          — newtype Complex = (…) (label = type name, leaf)
 
-use intentumdiff_plugin_sdk::tree::{SemanticNode, SemanticNodeBuilder};
+use intentdiff_plugin_sdk::tree::{SemanticNode, SemanticNodeBuilder};
 
 wit_bindgen::generate!({
     path: "wit/plugin.wit",
     world: "parser-plugin",
 });
 
-use crate::exports::intentumdiff::plugin::parser::ExamplePair;
-use crate::exports::intentumdiff::plugin::parser::Guest;
-use crate::exports::intentumdiff::plugin::parser::LanguageInfoRecord;
-use crate::exports::intentumdiff::plugin::parser::ParserMode;
+use crate::exports::intentdiff::plugin::parser::ExamplePair;
+use crate::exports::intentdiff::plugin::parser::Guest;
+use crate::exports::intentdiff::plugin::parser::LanguageInfoRecord;
+use crate::exports::intentdiff::plugin::parser::ParserMode;
 
 const PLUGIN_METADATA: &str = include_str!("../plugin_metadata.info");
 
 fn language_info_for(ids: Vec<String>) -> Vec<LanguageInfoRecord> {
-    let metadata = intentumdiff_plugin_sdk::metadata::parse_plugin_metadata(PLUGIN_METADATA);
+    let metadata = intentdiff_plugin_sdk::metadata::parse_plugin_metadata(PLUGIN_METADATA);
     ids.into_iter()
         .map(|language_id| {
             let info = metadata.language_or_default(&language_id);
@@ -386,7 +386,7 @@ export!(QSharpParser);
 mod tests {
     use super::*;
 
-    intentumdiff_plugin_sdk::plugin_compliance_tests! {
+    intentdiff_plugin_sdk::plugin_compliance_tests! {
         process: parse_qsharp,
         detect_fn: detect_language_impl,
         detect_cases: [
@@ -417,45 +417,45 @@ mod tests {
     #[test]
     fn test_valid_json_no_error() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_valid_json(&out, "SAMPLE");
-        intentumdiff_plugin_sdk::testing::assert_no_error(&out, "SAMPLE");
+        intentdiff_plugin_sdk::testing::assert_valid_json(&out, "SAMPLE");
+        intentdiff_plugin_sdk::testing::assert_no_error(&out, "SAMPLE");
     }
 
     #[test]
     fn test_root_is_compilation_unit() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_root_node_type(&out, "compilation_unit", "SAMPLE");
+        intentdiff_plugin_sdk::testing::assert_root_node_type(&out, "compilation_unit", "SAMPLE");
     }
 
     #[test]
     fn test_namespace_found() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_contains_node_type(&out, "namespace", "namespace");
+        intentdiff_plugin_sdk::testing::assert_contains_node_type(&out, "namespace", "namespace");
     }
 
     #[test]
     fn test_operation_found() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_contains_node_type(&out, "operation", "operation");
+        intentdiff_plugin_sdk::testing::assert_contains_node_type(&out, "operation", "operation");
     }
 
     #[test]
     fn test_function_found() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_contains_node_type(&out, "function", "function");
+        intentdiff_plugin_sdk::testing::assert_contains_node_type(&out, "function", "function");
     }
 
     #[test]
     fn test_newtype_found() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_contains_node_type(&out, "newtype", "newtype");
+        intentdiff_plugin_sdk::testing::assert_contains_node_type(&out, "newtype", "newtype");
     }
 
     #[test]
     fn test_internal_operation() {
         let src = "namespace Lib {\n    internal operation Private() : Unit {\n        let x = 1;\n    }\n}";
         let out = parse_qsharp(src);
-        intentumdiff_plugin_sdk::testing::assert_contains_node_type(
+        intentdiff_plugin_sdk::testing::assert_contains_node_type(
             &out,
             "operation",
             "internal operation",
@@ -465,8 +465,8 @@ mod tests {
     #[test]
     fn test_labels_nonempty() {
         let out = parse_qsharp(SAMPLE);
-        intentumdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "namespace", "labels");
-        intentumdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "operation", "labels");
-        intentumdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "function", "labels");
+        intentdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "namespace", "labels");
+        intentdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "operation", "labels");
+        intentdiff_plugin_sdk::testing::assert_labels_nonempty(&out, "function", "labels");
     }
 }
